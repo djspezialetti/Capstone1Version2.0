@@ -4,37 +4,37 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+
+import com.pluralsight.DAO.DataManager;
+import com.pluralsight.DAO.LedgerDAO;
 import org.apache.commons.dbcp2.BasicDataSource;
 import java.sql.*;
 
 import static com.pluralsight.Utility.systemDialogue;
 
 public class Main {
-    private static final String url = "jdbc:mysql://127.0.0.1:3306/transactions";
-    private static Connection connection = null;
+    private static final String url = "jdbc:mysql://127.0.0.1:3306/accountingledger";
+    private static DataManager dataManager;
+    private final LedgerDAO ledgerDAO;
+
+public Main(LedgerDAO ledgerDAO) {
+    this.ledgerDAO = ledgerDAO;
+}
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         loadConnection(args[0], args[1]);
-        List<Transaction> transactions = TransactionFileManager.loadTransactions();
+        //List<Transaction> transactions = TransactionFileManager.loadTransactions();
+        List<Transaction> transactions = ledgerDAO.getAllTransactions();
 
         boolean running = true;
 
         while (running) {
-<<<<<<< HEAD
             systemDialogue("\n\t=== FINANCIAL TRACKER ==="+
                     "\n\t\tD) Add Deposit"+
                     "\n\t\tP) Make Payment"+
                     "\n\t\tL) Ledger"+
                     "\n\t\tX) Exit") ;
-
-=======
-            System.out.println("\n=== FINANCIAL TRACKER ===");
-            System.out.println("D) Add Deposit");
-            System.out.println("P) Make Payment");
-            System.out.println("L) Ledger");
-            System.out.println("X) Exit");
->>>>>>> d3818882a0b4c5a8271642aad589871e3ca6c582
             System.out.print("Enter your choice: ");
 
             String choice = scanner.nextLine().toUpperCase();
@@ -56,7 +56,7 @@ public class Main {
         dataSource.setPassword(password);
 
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
         } catch (SQLException e) {
             System.out.println("Error when loading connection. Exiting application.");
             e.printStackTrace();
